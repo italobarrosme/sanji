@@ -1,0 +1,1 @@
+export { Shirt } from './Shirt'
