@@ -3,6 +3,7 @@ pipeline {
 
   parameters {
     string(name: 'NODE_ENV', defaultValue: 'production', description: 'Ambiente de execução')
+    string(name: 'PROJECT', defaultValue: 'coqueirodigital.com')
     // Você pode adicionar mais parâmetros aqui conforme seu .env
   }
 
@@ -29,17 +30,20 @@ NODE_ENV=${NODE_ENV}
     stage('Deploy com Docker Compose') {
       steps {
         script {
-          def dir = pwd()
-          echo "🚀 Rodando docker compose no diretório: ${dir}"
+          def projectPath = "/home/skyi/projects/${params.PROJECT_PATH}"
 
-          // Safe shutdown se containers estiverem rodando
-          sh 'docker compose down || true'
+          echo "🚚 Copiando arquivos para ${projectPath}"
+          sh "rm -rf ${projectPath}/*"
+          sh "cp -r * ${projectPath}/"
 
-          // Build e subida dos containers
-          sh 'docker compose up -d --build'
+          dir(projectPath) {
+            echo "🚀 Rodando docker compose no diretório: ${projectPath}"
+            sh 'docker compose down || true'
+            sh 'docker compose up -d --build'
+          }
         }
       }
-    }
+}
 
     stage('Ver containers') {
       steps {
