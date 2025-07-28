@@ -9,7 +9,7 @@ import { Overlay } from "./components/Overlay";
 import { Intro } from "../Intro";
 import { Customizer } from "@/modules/Customizer";
 import { useCustomizerStore } from "../Customizer/store";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 type ClosetCanvasProps = {
   position?: [number, number, number];
