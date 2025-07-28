@@ -2,16 +2,23 @@ pipeline {
   agent any
 
   environment {
-    PROJECT_NAME = "sanji"
-    CONTAINER_NAME = "sanji-app"
+    DOCKER_BUILDKIT = '1'
   }
 
   stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
     stage('Deploy com Docker Compose') {
       steps {
         sh '''
-          echo "🚀 Rodando docker compose no diretório: $PWD"
+          echo "📦 Parando containers antigos (se houver)"
           docker compose down || true
+
+          echo "🚀 Subindo containers"
           docker compose up -d --build
         '''
       }
@@ -19,7 +26,7 @@ pipeline {
 
     stage('Ver containers') {
       steps {
-        sh 'docker ps --filter "name=${CONTAINER_NAME}"'
+        sh 'docker ps -a'
       }
     }
   }
