@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_BUILDKIT = '1'
+    NODE_ENV     = "${NODE_ENV}"
   }
 
   stages {
@@ -12,15 +12,22 @@ pipeline {
       }
     }
 
+    stage('Gerar .env') {
+      steps {
+        script {
+          echo "📝 Gerando .env"
+          sh """
+            echo NODE_ENV=${NODE_ENV} > .env
+          """
+        }
+      }
+    }
+
     stage('Deploy com Docker Compose') {
       steps {
-        sh '''
-          echo "📦 Parando containers antigos (se houver)"
-          docker compose down || true
-
-          echo "🚀 Subindo containers"
-          docker compose up -d --build
-        '''
+        echo "🚀 Rodando docker compose no diretório: ${pwd()}"
+        sh 'docker compose down || true'
+        sh 'docker compose up -d --build'
       }
     }
 
